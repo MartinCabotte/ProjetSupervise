@@ -49,6 +49,7 @@ def main():
     possiblyNotRepresentative = arrayOfZeros[arrayOfZeros>=(2*Q3)]
     print("Ces attributs ne sont peut être pas représentatifs dans nos données car très représentés : ",possiblyNotRepresentative)
 
+    
 
 if __name__ == "__main__":
     main()
