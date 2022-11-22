@@ -1,4 +1,5 @@
 import perceptron
+import pretreat
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,7 +9,7 @@ def main():
     data_train = pd.read_csv("train.csv",sep=",",decimal=".")
     data_test = pd.read_csv("test.csv",sep=",",decimal=".")
     
-    
+    target_train = pretreat.pretreat(data_train)
     
     launch = True
     print("Bienvenue dans l'analyse du jeu de données par 6 systèmes supervisé différents du groupe Cabotte Martin, Charmoille Maxime et Ducrocq Adrien : \n\n")
