@@ -1,4 +1,4 @@
-import perceptron
+from perceptron import PerceptronClassifier
 import pretreat
 import pandas as pd
 import numpy as np
@@ -9,7 +9,11 @@ def main():
     data_train = pd.read_csv("train.csv",sep=",",decimal=".")
     data_test = pd.read_csv("test.csv",sep=",",decimal=".")
     
-    target_train = pretreat.pretreat(data_train)
+    target_train = pretreat.target(data_train)
+    
+    data_train,data_test = pretreat.pretreat_data(data_train,data_test)
+    
+    print(data_test)
     
     launch = True
     print("Bienvenue dans l'analyse du jeu de données par 6 systèmes supervisé différents du groupe Cabotte Martin, Charmoille Maxime et Ducrocq Adrien : \n\n")
@@ -23,9 +27,11 @@ def main():
     print("7 - Quitter")
     
     choice = input()
+    
     while launch :
+        
         while choice not in ["1","2","3","4","5","6","7"]:
-            print("Choix invalide ! Veuillez choisir une option parmi la liste : \n")
+            print("Veuillez choisir la méthode que vous souhaitez utiliser : \n")
             print("1 - Perceptron")
             print("2 - En attente")
             print("3 - En attente")
@@ -34,9 +40,13 @@ def main():
             print("6 - En attente")
             print("7 - Quitter")
             choice = input()
+            
 
         if choice == "1":
-            perceptron.perceptron()
+            per = PerceptronClassifier(0,0)
+            per.entrainement(data_train,target_train)
+            #per.validation_croisee(data_train,target_train)
+            print(per.prediction(data_test))
             choice = "0"
         
         elif choice == "2":
