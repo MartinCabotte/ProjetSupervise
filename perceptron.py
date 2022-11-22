@@ -1,0 +1,3 @@
+def perceptron():
+    print("coucou")
+    
