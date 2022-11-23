@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import Perceptron
 from sklearn.multiclass import OneVsOneClassifier,OneVsRestClassifier
+from sklearn.model_selection import cross_validate
 
 from sklearn.datasets import make_classification
 
@@ -36,61 +37,71 @@ class PerceptronClassifier:
     def validation_croisee(self,data,target):
         
         K = 10
-        bestError = -1
-        bestLambda = 0
-        bestLearningRate = 0
         
-        #on mélange tout d'abord nos données
-        index = np.arange(0,len(data),1)
-        np.random.shuffle(index)
-
-        data = data[index]
-        target = target[index]
-
-
-        #On les divise en k paquets
-        paquetsX = np.array_split(data,K)
-        paquetst = np.array_split(target,K)
-        
-        
-        
-        #on réalise les simulations
-        for lambda_test in np.arange(0.1,1,0.1):
-            self.lamb = lambda_test
-            print(self.lamb)
+        if self.CrossValidation == 1:
             
-            meanError = 0
-            for learningRate_test in np.arange(0.01,1,0.01):
-                self.learningRate = learningRate_test
+            result = cross_validate(Perceptron(),data,target,cv=K)
+            print(result["score_time"])
+            print(result["test_score"])
+            
+        else :
+            
+            bestError = -1
+            bestLambda = 0
+            bestLearningRate = 0
+            
+            #on mélange tout d'abord nos données
+            index = np.arange(0,len(data),1)
+            np.random.shuffle(index)
+
+            data = data[index]
+            target = target[index]
+
+
+            #On les divise en k paquets
+            paquetsX = np.array_split(data,K)
+            paquetst = np.array_split(target,K)
+            
+            
+            
+            #on réalise les simulations
+            for lambda_test in np.arange(0.001,0.01,0.001):
+                self.lamb = lambda_test
+                print(self.lamb)
                 
-                for i in range(0,K):
+                meanError = 0
+                for learningRate_test in np.arange(0.001,0.01,0.001):
+                    self.learningRate = learningRate_test
+                    print(learningRate_test)
                     
-                    testX = paquetsX[i]
-                    testT = paquetst[i]
+                    for i in range(0,K):
+                        
+                        testX = paquetsX[i]
+                        testT = paquetst[i]
+                        
+                        validationX = np.concatenate(np.delete(paquetsX,i,0))
+                        validationT = np.concatenate(np.delete(paquetst,i,0))
                     
-                    validationX = np.concatenate(np.delete(paquetsX,i,0))
-                    validationT = np.concatenate(np.delete(paquetst,i,0))
-                
-                    self.entrainement(validationX,validationT)
+                        self.entrainement(validationX,validationT)
+                        
+                        prediction = self.prediction(testX)
+                        
+                        meanError += self.erreur(testT,prediction)
+                        
+                    meanError = np.mean(meanError)
                     
-                    prediction = self.prediction(testX)
-                    
-                    meanError += self.erreur(testT,prediction)
-                    
-                meanError = np.mean(meanError)
-                
-                if ((bestError == -1)) or (meanError <= bestError):
-                    bestError = meanError
-                    bestLambda = lambda_test
-                    bestLearningRate = learningRate_test
-                    
-        self.lamb = bestLambda
-        self.learningRate = bestLearningRate
-        
-        print("Le meilleur lambda : ",bestLambda)
-        print("Le meilleur learning Rate : ",bestLearningRate)
-        
-        self.entrainement(data,target)
+                    if ((bestError == -1)) or (meanError <= bestError):
+                        bestError = meanError
+                        bestLambda = lambda_test
+                        bestLearningRate = learningRate_test
+                        
+            self.lamb = bestLambda
+            self.learningRate = bestLearningRate
+            
+            print("Le meilleur lambda : ",bestLambda)
+            print("Le meilleur learning Rate : ",bestLearningRate)
+            
+            self.entrainement(data,target)
         
         
         

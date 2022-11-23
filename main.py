@@ -13,7 +13,6 @@ def main():
     
     data_train,data_test = pretreat.pretreat_data(data_train,data_test)
     
-    print(data_test)
     
     launch = True
     print("Bienvenue dans l'analyse du jeu de données par 6 systèmes supervisé différents du groupe Cabotte Martin, Charmoille Maxime et Ducrocq Adrien : \n\n")
@@ -43,9 +42,9 @@ def main():
             
 
         if choice == "1":
-            per = PerceptronClassifier(0,0)
-            per.entrainement(data_train,target_train)
-            #per.validation_croisee(data_train,target_train)
+            per = PerceptronClassifier(1,0)
+            # per.entrainement(data_train,target_train)
+            per.validation_croisee(data_train,target_train)
             print(per.prediction(data_test))
             choice = "0"
         
