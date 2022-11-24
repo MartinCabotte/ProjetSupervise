@@ -1,18 +1,32 @@
-from perceptron import PerceptronClassifier
-import pretreat
+from methodes.perceptron import PerceptronClassifier
+import pretraitement.pretreat as pretreat
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import os
 
 def main():
     
+    os.system("clear")
     data_train = pd.read_csv("train.csv",sep=",",decimal=".")
     data_test = pd.read_csv("test.csv",sep=",",decimal=".")
     
-    target_train = pretreat.target(data_train)
+    target= pretreat.target(data_train)
     
-    data_train,data_test = pretreat.pretreat_data(data_train,data_test)
+    data = pretreat.pretreat_data(data_train,data_test)
     
+    
+    # data_train = data[0]
+    # data_test = data[1]
+    
+    #On récupère les 770 premières données train pour entrainer le modele et les 220 dernières pour mesure l'efficacité en les envoyant en temps que données test
+    #Cela nous permet d'avoir un jeu de données test disposant de "target" 
+    
+    data_train = data[0][:770]
+    data_test = data[0][770:]
+    
+    target_train = target[:770]
+    target_test = target[770:]
     
     launch = True
     print("Bienvenue dans l'analyse du jeu de données par 6 systèmes supervisé différents du groupe Cabotte Martin, Charmoille Maxime et Ducrocq Adrien : \n\n")
@@ -28,7 +42,7 @@ def main():
     choice = input()
     
     while launch :
-        
+        # os.system("clear")
         while choice not in ["1","2","3","4","5","6","7"]:
             print("Veuillez choisir la méthode que vous souhaitez utiliser : \n")
             print("1 - Perceptron")
@@ -42,10 +56,15 @@ def main():
             
 
         if choice == "1":
-            per = PerceptronClassifier(1,0)
-            # per.entrainement(data_train,target_train)
+            per = PerceptronClassifier(1)
             per.validation_croisee(data_train,target_train)
-            print(per.prediction(data_test))
+            # per.entrainement(data_train,target_train)
+            
+            prediction = per.prediction(data_test)
+            print(prediction)
+            print("l'erreur est de : ", per.erreur_finale(prediction,target_test),"%")
+            print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
+            input()
             choice = "0"
         
         elif choice == "2":

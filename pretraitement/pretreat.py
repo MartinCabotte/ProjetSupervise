@@ -1,7 +1,16 @@
 import pandas as pd
 import numpy as np
 
-def target(data):
+def target(data:pd.DataFrame) -> np.array:
+    """Fonction permettant de récupérer la liste des "cibles" pour un jeu de données
+
+    Args:
+        data (pd.DataFrame): donnee dont on veut les "cibles"
+
+    Returns:
+        np.array(classification): tableaux des classes pour chaque element
+    """
+    
     
     #we get all species name and the number of species
 
@@ -18,32 +27,18 @@ def target(data):
  
     return np.array(classification)
 
-def target_manual(data):
-    
-    #we get all species name and the number of species
 
-    list_species = []
-    for species in data["species"]:
-        if species not in list_species:
-            list_species.append(species)
             
-    #we create the target matrix for data
-    
-    classification = []        
-    counter = 0
-    for species in list_species:
-        classification.append([])
-        for element in data["species"]:
-            if element == species:
-                classification[counter].append(1)
-            else:
-                classification[counter].append(0)
-        counter += 1
-    
-    return np.array(classification)
-            
-def pretreat_data(data_train,data_test):
+def pretreat_data(data_train:pd.DataFrame,data_test:pd.DataFrame):
+    """_summary_
 
+    Args:
+        data_train (pd.DataFrame): jeu de donnee d'entrainement à nettoyer
+        data_test (pd.DataFrame): jeu de donnee test à nettoyer
+
+    Returns:
+        out: jeu de donnee d'entrainement et jeu de donnee test traite et convertit en "array"
+    """
     
     del data_train["id"]
     del data_train["species"]
@@ -67,8 +62,8 @@ def pretreat_data(data_train,data_test):
             temp.append(data_test[key][i])
         data_test_out.append(temp)
     
-    
-    return np.array(data_train_out),np.array(data_test_out)
+    out = [np.array(data_train_out),np.array(data_test_out)]
+    return out
 
 
 
