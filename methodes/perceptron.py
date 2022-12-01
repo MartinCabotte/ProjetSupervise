@@ -3,7 +3,6 @@ import numpy as np
 import os
 from sklearn.linear_model import Perceptron
 from sklearn.multiclass import OneVsOneClassifier,OneVsRestClassifier
-from sklearn.model_selection import cross_validate
 
 from sklearn.datasets import make_classification
 
@@ -94,7 +93,7 @@ class PerceptronClassifier:
                     
                     prediction = self.prediction(testX)
                     
-                    meanError += self.erreur(testT,prediction)
+                    meanError += self.erreur(testT,prediction,testX,1)
                     
                 meanError = np.mean(meanError)
                 
@@ -130,24 +129,31 @@ class PerceptronClassifier:
     
       
     @staticmethod  
-    def erreur(t:np.array,prediction:np.array) -> int:
+    def erreur(t:np.array,prediction:np.array,data_entrainement:list,methode:int) -> int:
         """fonction retournant l'erreur de prediction lors de l'entrainement du modele pour une valeur donnee
 
         Args:
             t (np.array): liste contenant le numero de la classe à laquelle appartient chaque element
             prediction (np.array): liste contenant le numero de la classe à laquelle appartient chaque selon le modele
-
+            methode (int): nombre permettant de choisir l'erreur a appliquer
         Returns:
             error (int) : l'erreur du modele
         """
         error = 0
-        for i in range(len(t)):
+        if methode == 0:
+            for i in range(len(t)):
 
-            if t[i] != prediction[i]:
-                error += 1
-            else :
-                error += 0
+                if t[i] != prediction[i]:
+                    error += 1
+                else :
+                    error += 0
+        elif methode == 1:
+            for i in range(len(t)):
+                if t[i] != prediction[i]:
+                    error += (-data_entrainement[i]*t[i])
+            
         return error
+                    
 
 
     @staticmethod
