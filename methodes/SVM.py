@@ -130,7 +130,7 @@ class SVMClassifier:
                 
                 meanError = 0
                 
-                for gamma_test in np.arange(0.01,1,0.01):
+                for gamma_test in np.arange(0.1,1,0.1):
                     
                     self.gamma = gamma_test
                     print("gamma = ",gamma_test)
