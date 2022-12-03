@@ -76,13 +76,13 @@ class SVMClassifier:
                     
                     prediction = self.prediction(testX)
                     
-                    meanError += self.erreur(testT,prediction)
+                    meanError += self.erreur(testT,prediction,1)
                         
-                    meanError = np.mean(meanError)
-                    
-                    if ((bestError == -1)) or (meanError <= bestError):
-                        bestError = meanError
-                        bestNu = nu_test
+                meanError = np.mean(meanError)
+                
+                if ((bestError == -1)) or (meanError <= bestError):
+                    bestError = meanError
+                    bestNu = nu_test
 
             
         elif self.kernel == "rbf":
@@ -111,7 +111,7 @@ class SVMClassifier:
                         
                         prediction = self.prediction(testX)
                         
-                        meanError += self.erreur(testT,prediction)
+                        meanError += self.erreur(testT,prediction,1)
                         
                     meanError = np.mean(meanError)
                     
@@ -124,18 +124,18 @@ class SVMClassifier:
         elif self.kernel == "poly":
             
             #on réalise les simulations
-            for nu_test in np.arange(0.1,0.3,0.1):
+            for nu_test in np.arange(0.01,0.3,0.01):
                 self.nu = nu_test
                 print("nu = ",self.nu)
                 
                 meanError = 0
                 
-                for gamma_test in np.arange(0.1,0.3,0.1):
+                for gamma_test in np.arange(0.01,1,0.01):
                     
                     self.gamma = gamma_test
                     print("gamma = ",gamma_test)
                     
-                    for M_test in range(1,15):
+                    for M_test in range(1,10):
                         self.M = M_test
                         print("M = ",M_test)
                         
@@ -156,7 +156,7 @@ class SVMClassifier:
                                 
                                 prediction = self.prediction(testX)
                                 
-                                meanError += self.erreur(testT,prediction)
+                                meanError += self.erreur(testT,prediction,1)
                                 
                             meanError = np.mean(meanError)
                             
@@ -199,7 +199,7 @@ class SVMClassifier:
                             
                             prediction = self.prediction(testX)
                             
-                            meanError += self.erreur(testT,prediction)
+                            meanError += self.erreur(testT,prediction,1)
                             
                         meanError = np.mean(meanError)
                         
@@ -260,19 +260,22 @@ class SVMClassifier:
     
       
     @staticmethod  
-    def erreur(t:np.array,prediction:np.array) -> int:
+    def erreur(t:np.array,prediction:np.array,choix:int) -> int:
         """fonction retournant l'erreur de prediction lors de l'entrainement du modele pour une valeur donnee
 
         Args:
             t (np.array): liste contenant le numero de la classe à laquelle appartient chaque element
             prediction (np.array): liste contenant le numero de la classe à laquelle appartient chaque selon le modele
-
+            choix (int) : choix de l'erreur : 0 = quadratique, 1 = svm loss
         Returns:
             error (int) : l'erreur du modele
         """
         error = 0
         for i in range(len(t)) :
-            error += (t[i] - prediction[i])**2 
+            if choix == 0:
+                error += (t[i] - prediction[i])**2 
+            else:
+                error += max(0,1-t[i]*prediction[i])
         return error
 
 
