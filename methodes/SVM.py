@@ -124,22 +124,22 @@ class SVMClassifier:
         elif self.kernel == "poly":
             
             #on réalise les simulations
-            for nu_test in np.arange(0.01,0.3,0.01):
+            for nu_test in np.arange(0.25,0.3,0.01):
                 self.nu = nu_test
                 print("nu = ",self.nu)
                 
                 meanError = 0
                 
-                for gamma_test in np.arange(0.1,1,0.1):
+                for gamma_test in np.arange(0.1,0.5,0.1):
                     
                     self.gamma = gamma_test
                     print("gamma = ",gamma_test)
                     
-                    for M_test in range(1,10):
+                    for M_test in range(1,8):
                         self.M = M_test
                         print("M = ",M_test)
                         
-                        for coef0_test in np.arange(0,10,1):
+                        for coef0_test in np.arange(0,8,1):
                             self.coef0 = coef0_test
                             print("coef0 = ",coef0_test)
                             
@@ -170,19 +170,19 @@ class SVMClassifier:
         elif self.kernel == "sigmoid":
             
             #on réalise les simulations
-            for nu_test in np.arange(0.1,0.3,0.1):
+            for nu_test in np.arange(0.25,0.3,0.01):
                 self.nu = nu_test
                 print("nu = ",self.nu)
                 
                 meanError = 0
                 
-                for gamma_test in np.arange(0.1,0.3,0.1):
+                for gamma_test in np.arange(0.1,0.3,0.05):
                     
                     self.gamma = gamma_test
                     print("gamma = ",gamma_test)
                     
                         
-                    for coef0_test in np.arange(-1,5,1):
+                    for coef0_test in np.arange(0,5,1):
                         self.coef0 = coef0_test
                         print("coef0 = ",coef0_test)
                         
