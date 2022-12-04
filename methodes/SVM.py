@@ -12,7 +12,7 @@ class SVMClassifier:
         self.M = 3 #utile uniquement pour polynomial (degre du polynome)
         self.coef0 = 0 #Utile uniquement pour sigmoide et polynomial
         self.gamma = 0.1#utile pour rbf, poly et sigmoid (par défaut 1/n)
-        self.method = "ovr"
+        self.method = "ovo"
         
         
     def entrainement(self,data_train:np.array,target_train:np.array):
