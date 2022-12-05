@@ -1,6 +1,9 @@
+from   methodes.Random_Forest import Random_ForestClassifier
+
 from methodes.perceptron import PerceptronClassifier
 
 from methodes.SVM import SVMClassifier
+
 import pretraitement.pretreat as pretreat
 import pandas as pd
 import numpy as np
@@ -9,7 +12,6 @@ import os
 
 def main():
     
-    #On ouvre et on nettoie les données que l'on utilisera
     os.system("clear")
     data_train = pd.read_csv("train.csv",sep=",",decimal=".")
     data_test = pd.read_csv("test.csv",sep=",",decimal=".")
@@ -36,7 +38,7 @@ def main():
     print("Veuillez choisir la méthode que vous souhaitez utiliser : \n")
     print("1 - Perceptron")
     print("2 - Méthodes à noyaux")
-    print("3 - En attente")
+    print("3 - Random Forest")
     print("4 - En attente")
     print("5 - En attente")
     print("6 - En attente")
@@ -45,7 +47,7 @@ def main():
     choice = input()
     
     while launch :
-        
+        # os.system("clear")
         while choice not in ["1","2","3","4","5","6","7"]:
             print("Veuillez choisir la méthode que vous souhaitez utiliser : \n")
             print("1 - Perceptron")
@@ -59,7 +61,6 @@ def main():
             
 
         if choice == "1":
-
             per = PerceptronClassifier(1)
             per.validation_croisee(data_train,target_train)
             # per.entrainement(data_train,target_train)
@@ -72,7 +73,6 @@ def main():
             choice = "0"
         
         elif choice == "2":
-
             print("SVM")
             choice_1 = ""
             choice_1_validation = ["1","2","3","4"]
@@ -107,11 +107,17 @@ def main():
             print(prediction)
             print("erreur : ",svm.erreur_finale(prediction,target_test),"%")
             input()
-
             choice = "0"
         
         elif choice == "3":
-            print("En développement")
+            RD = Random_ForestClassifier()
+            RD.validation_croisee(data_train,target_train)
+            
+            prediction = RD.prediction(data_test)
+            print(prediction)
+            print("l'erreur est de : ", RD.erreur_finale(prediction,target_test),"%")
+            print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
+            input()
             choice = "0"
             
         elif choice == "4":
