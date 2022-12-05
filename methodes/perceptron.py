@@ -45,7 +45,7 @@ class PerceptronClassifier:
         
 
     def validation_croisee(self,data:np.array,target:np.array):
-        """Fonction permettant la validation croisee afin de trouver les meilleurs hyperparametres
+        """Fonction permettant la validation croisee K fois afin de trouver les meilleurs hyperparametres
 
         Args:
             data (np.array): donnee d'entrainement
@@ -97,6 +97,7 @@ class PerceptronClassifier:
                     
                 meanError = np.mean(meanError)
                 
+                #On met à jour l'erreur la plus basse et les hyperparamètres associées
                 if ((bestError == -1)) or (meanError <= bestError):
                     bestError = meanError
                     bestLambda = lambda_test
