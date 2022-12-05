@@ -56,7 +56,7 @@ def main():
             
 
         if choice == "1":
-            per = PerceptronClassifier(1)
+            per = PerceptronClassifier(0)
             per.validation_croisee(data_train,target_train)
             # per.entrainement(data_train,target_train)
             
