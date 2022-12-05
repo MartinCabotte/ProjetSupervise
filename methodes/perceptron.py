@@ -4,6 +4,7 @@ import os
 from sklearn.linear_model import Perceptron
 from sklearn.multiclass import OneVsOneClassifier,OneVsRestClassifier
 
+
 from sklearn.datasets import make_classification
 
 
@@ -45,6 +46,7 @@ class PerceptronClassifier:
         
 
     def validation_croisee(self,data:np.array,target:np.array):
+
         """Fonction permettant la validation croisee K fois afin de trouver les meilleurs hyperparametres
 
         Args:
@@ -93,6 +95,7 @@ class PerceptronClassifier:
                     
                     prediction = self.prediction(testX)
                     
+
                     meanError += self.erreur(testT,prediction,testX,1)
                     
                 meanError = np.mean(meanError)
@@ -136,11 +139,14 @@ class PerceptronClassifier:
         Args:
             t (np.array): liste contenant le numero de la classe à laquelle appartient chaque element
             prediction (np.array): liste contenant le numero de la classe à laquelle appartient chaque selon le modele
+
             methode (int): nombre permettant de choisir l'erreur a appliquer
+
         Returns:
             error (int) : l'erreur du modele
         """
         error = 0
+
         if methode == 0:
             for i in range(len(t)):
 
@@ -154,7 +160,6 @@ class PerceptronClassifier:
                     error += (-data_entrainement[i]*t[i])
             
         return error
-                    
 
 
     @staticmethod
