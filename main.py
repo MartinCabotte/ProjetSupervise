@@ -1,4 +1,5 @@
 from methodes.perceptron import PerceptronClassifier
+
 from methodes.SVM import SVMClassifier
 import pretraitement.pretreat as pretreat
 import pandas as pd
@@ -58,6 +59,7 @@ def main():
             
 
         if choice == "1":
+
             per = PerceptronClassifier(1)
             per.validation_croisee(data_train,target_train)
             # per.entrainement(data_train,target_train)
@@ -70,6 +72,7 @@ def main():
             choice = "0"
         
         elif choice == "2":
+
             print("SVM")
             choice_1 = ""
             choice_1_validation = ["1","2","3","4"]
@@ -104,6 +107,7 @@ def main():
             print(prediction)
             print("erreur : ",svm.erreur_finale(prediction,target_test),"%")
             input()
+
             choice = "0"
         
         elif choice == "3":

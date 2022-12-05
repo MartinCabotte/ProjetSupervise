@@ -3,7 +3,7 @@ import numpy as np
 import os
 from sklearn.linear_model import Perceptron
 from sklearn.multiclass import OneVsOneClassifier,OneVsRestClassifier
-from sklearn.model_selection import cross_validate
+
 
 from sklearn.datasets import make_classification
 
@@ -46,7 +46,8 @@ class PerceptronClassifier:
         
 
     def validation_croisee(self,data:np.array,target:np.array):
-        """Fonction permettant la validation croisee afin de trouver les meilleurs hyperparametres
+
+        """Fonction permettant la validation croisee K fois afin de trouver les meilleurs hyperparametres
 
         Args:
             data (np.array): donnee d'entrainement
@@ -94,10 +95,12 @@ class PerceptronClassifier:
                     
                     prediction = self.prediction(testX)
                     
-                    meanError += self.erreur(testT,prediction)
+
+                    meanError += self.erreur(testT,prediction,testX,1)
                     
                 meanError = np.mean(meanError)
                 
+                #On met à jour l'erreur la plus basse et les hyperparamètres associées
                 if ((bestError == -1)) or (meanError <= bestError):
                     bestError = meanError
                     bestLambda = lambda_test
@@ -130,23 +133,32 @@ class PerceptronClassifier:
     
       
     @staticmethod  
-    def erreur(t:np.array,prediction:np.array) -> int:
+    def erreur(t:np.array,prediction:np.array,data_entrainement:list,methode:int) -> int:
         """fonction retournant l'erreur de prediction lors de l'entrainement du modele pour une valeur donnee
 
         Args:
             t (np.array): liste contenant le numero de la classe à laquelle appartient chaque element
             prediction (np.array): liste contenant le numero de la classe à laquelle appartient chaque selon le modele
 
+            methode (int): nombre permettant de choisir l'erreur a appliquer
+
         Returns:
             error (int) : l'erreur du modele
         """
         error = 0
-        for i in range(len(t)):
 
-            if t[i] != prediction[i]:
-                error += 1
-            else :
-                error += 0
+        if methode == 0:
+            for i in range(len(t)):
+
+                if t[i] != prediction[i]:
+                    error += 1
+                else :
+                    error += 0
+        elif methode == 1:
+            for i in range(len(t)):
+                if t[i] != prediction[i]:
+                    error += (-data_entrainement[i]*t[i])
+            
         return error
 
 
