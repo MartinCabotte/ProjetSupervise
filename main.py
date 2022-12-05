@@ -8,6 +8,7 @@ import os
 
 def main():
     
+    #On ouvre et on nettoie les données que l'on utilisera
     os.system("clear")
     data_train = pd.read_csv("train.csv",sep=",",decimal=".")
     data_test = pd.read_csv("test.csv",sep=",",decimal=".")
@@ -43,7 +44,7 @@ def main():
     choice = input()
     
     while launch :
-        # os.system("clear")
+        
         while choice not in ["1","2","3","4","5","6","7"]:
             print("Veuillez choisir la méthode que vous souhaitez utiliser : \n")
             print("1 - Perceptron")

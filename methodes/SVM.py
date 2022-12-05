@@ -58,7 +58,7 @@ class SVMClassifier:
         
         if self.kernel == "linear" :
             
-            #on réalise les simulations
+            #on réalise les simulations de notre cross validation
             for nu_test in np.arange(0.001,0.3,0.001):
                 self.nu = nu_test
                 print(self.nu)
@@ -80,6 +80,7 @@ class SVMClassifier:
                         
                 meanError = np.mean(meanError)
                 
+                #On met à jour l'erreur la plus basse et les hyperparamètres associées
                 if ((bestError == -1)) or (meanError <= bestError):
                     bestError = meanError
                     bestNu = nu_test
@@ -87,7 +88,7 @@ class SVMClassifier:
             
         elif self.kernel == "rbf":
             
-            #on réalise les simulations
+            #on réalise les simulations de notre cross validation
             for nu_test in np.arange(0.01,0.3,0.01):
                 self.nu = nu_test
                 print("nu = ",self.nu)
@@ -115,6 +116,7 @@ class SVMClassifier:
                         
                     meanError = np.mean(meanError)
                     
+                    #On met à jour l'erreur la plus basse et les hyperparamètres associées
                     if ((bestError == -1)) or (meanError <= bestError):
                         bestError = meanError
                         bestNu = nu_test
@@ -123,7 +125,7 @@ class SVMClassifier:
             
         elif self.kernel == "poly":
             
-            #on réalise les simulations
+            #on réalise les simulations de notre cross validation
             for nu_test in np.arange(0.25,0.3,0.01):
                 self.nu = nu_test
                 print("nu = ",self.nu)
@@ -160,6 +162,7 @@ class SVMClassifier:
                                 
                             meanError = np.mean(meanError)
                             
+                            #On met à jour l'erreur la plus basse et les hyperparamètres associées
                             if ((bestError == -1)) or (meanError <= bestError):
                                 bestError = meanError
                                 bestNu = nu_test
@@ -169,7 +172,7 @@ class SVMClassifier:
                         
         elif self.kernel == "sigmoid":
             
-            #on réalise les simulations
+            #on réalise les simulations de notre cross validation
             for nu_test in np.arange(0.25,0.3,0.01):
                 self.nu = nu_test
                 print("nu = ",self.nu)
@@ -203,13 +206,14 @@ class SVMClassifier:
                             
                         meanError = np.mean(meanError)
                         
+                        #On met à jour l'erreur la plus basse et les hyperparamètres associées
                         if ((bestError == -1)) or (meanError <= bestError):
                             bestError = meanError
                             bestNu = nu_test
                             bestGamma = gamma_test
         
-        
-        print(bestNu)
+
+        #On met à jour une derniere fois les hyperparamètres avant de réentrainer le modèle
         self.nu = bestNu
         self.coef0 = bestCoeff0
         self.M = bestM
