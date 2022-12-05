@@ -1,8 +1,6 @@
 import numpy as np
 import os
 from sklearn.ensemble import RandomForestClassifier
-from sklearn import metrics
-
 
 
 class Random_ForestClassifier:
@@ -118,11 +116,9 @@ class Random_ForestClassifier:
             error (int) : l'erreur du modele
         """
         error = 0
-        error=metrics.accuracy_score(data_entrainement, prediction)
-        
-        # for i in range(len(t)):
-        #     if t[i] != prediction[i]:
-        #         error += (-data_entrainement[i]*t[i])
+        for i in range(len(t)):
+            if t[i] != prediction[i]:
+                error += (-data_entrainement[i]*t[i])
             
         return error
                     
