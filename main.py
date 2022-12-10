@@ -1,4 +1,6 @@
-from   methodes.Random_Forest import Random_ForestClassifier
+from methodes.Random_Forest import Random_ForestClassifier
+
+from methodes.regression_logistique import Logistic_RegressionClassifier
 
 from methodes.perceptron import PerceptronClassifier
 
@@ -52,7 +54,7 @@ def main():
             print("Veuillez choisir la méthode que vous souhaitez utiliser : \n")
             print("1 - Perceptron")
             print("2 - Méthodes à noyaux")
-            print("3 - En attente")
+            print("3 - Random Forest")
             print("4 - En attente")
             print("5 - En attente")
             print("6 - En attente")
@@ -115,13 +117,20 @@ def main():
             
             prediction = RD.prediction(data_test)
             print(prediction)
-            print("l'erreur est de : ", RD.erreur_finale(prediction,target_test),"%")
+            print("l'accuracy est de : ", RD.erreur_finale(prediction,target_test),"%")
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
             
         elif choice == "4":
-            print("En développement")
+            RL = Logistic_RegressionClassifier()
+            RL.validation_croisee(data_train,target_train)
+            
+            prediction = RL.prediction(data_test)
+            print(prediction)
+            print("l'erreur est de : ", RL.erreur_finale(prediction,target_test),"%")
+            print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
+            input()
             choice = "0"
             
         elif choice == "5":

@@ -1,15 +1,16 @@
 import numpy as np
 import os
-from sklearn.ensemble import RandomForestClassifier
-from sklearn import metrics
+from sklearn.linear_model import LogisticRegression
 
 
-class Random_ForestClassifier:
+class Logistic_RegressionClassifier:
     
     def __init__(self):
         """on initie la classe du Random Forest"""
         
-        self.n_estimer = 10
+        self.c_estimer = 0.01   
+        self.solvers_possible = ['newton-cg', 'lbfgs', 'liblinear']
+        self.solvers='newton-cg'
         self.model = ""
         
     def entrainement(self,data_train:np.array,target_train:np.array):
@@ -19,9 +20,9 @@ class Random_ForestClassifier:
             data_train (np.array): donnee d'entrainement
             target_train (np.array): cible correspondante pour les donnees d'entrainement
         """
-        RandFor=RandomForestClassifier(n_estimators=self.n_estimer)
+        logisticRegr = LogisticRegression(C=self.c_estimer,solver=self.solvers)
         
-        self.model = RandFor.fit(data_train,target_train)
+        self.model = logisticRegr.fit(data_train,target_train)
         
         
         
@@ -37,6 +38,8 @@ class Random_ForestClassifier:
             
         bestError = -1
         bestn_estimer = 0
+        best_C = 0
+        best_solv=''
         
         #on mélange tout d'abord nos données
         index = np.arange(0,len(data),1)
@@ -53,40 +56,47 @@ class Random_ForestClassifier:
         
         
         #on réalise les simulations
-        for n_estimer_test in np.arange(10,500,10):
-            self.n_estimer = n_estimer_test
-            print(self.n_estimer)
+        for solv in self.solvers_possible:
+            for c_estimer_test in np.arange(0.01,10,0.01):
+                self.c_estimer = c_estimer_test
+                self.solvers=solv
+                print(self.c_estimer)
+                print(solv)
+                
+                meanError = 0
             
-            meanError = 0
-        
-            for i in range(0,K):
+                for i in range(0,K):
+                    
+                    testX = paquetsX[i]
+                    testT = paquetst[i]
+                    
+                    validationX = np.concatenate(np.delete(paquetsX,i,0))
+                    validationT = np.concatenate(np.delete(paquetst,i,0))
                 
-                testX = paquetsX[i]
-                testT = paquetst[i]
+                    self.entrainement(validationX,validationT)
+                    
+                    prediction = self.prediction(testX)
+                    
+                    meanError += self.erreur(testT,prediction,testX)
+                    
                 
-                validationX = np.concatenate(np.delete(paquetsX,i,0))
-                validationT = np.concatenate(np.delete(paquetst,i,0))
+                meanError = np.mean(meanError)
+                
+                
+                
+                if ((bestError == -1)) or (meanError <= bestError):
+                    bestError = meanError
+                    best_C = c_estimer_test
+                    best_solv=solv
+                    
+            self.c_estimer = best_C
+            self.solvers=best_solv
+            os.system("clear")
+            print("Le meilleur C est : ",best_C)
+            print("Le meilleur solveur est : ",best_solv)
             
-                self.entrainement(validationX,validationT)
-                
-                prediction = self.prediction(testX)
-                
-                meanError += self.erreur(testT,prediction)
-                
-            meanError=meanError/K
-            
-            
-            
-            if ((bestError == -1)) or (meanError >= bestError):
-                bestError = meanError
-                bestn_estimer = n_estimer_test
-                
-        self.n_estimer = bestn_estimer
-        os.system("clear")
-        print("Le meilleur n estimators est : ",bestn_estimer)
-        
-        #une fois les meilleurs hyperparametres trouves, on réentraine le modele avec le jeu complet de donnees
-        self.entrainement(data,target)
+            #une fois les meilleurs hyperparametres trouves, on réentraine le modele avec le jeu complet de donnees
+            self.entrainement(data,target)
         
         
         
@@ -106,7 +116,7 @@ class Random_ForestClassifier:
     
       
     @staticmethod  
-    def erreur(t,prediction) -> int:
+    def erreur(t:np.array,prediction:np.array,data_entrainement:list) -> int:
         """fonction retournant l'erreur de prediction lors de l'entrainement du modele pour une valeur donnee
 
         Args:
@@ -117,17 +127,16 @@ class Random_ForestClassifier:
             error (int) : l'erreur du modele
         """
         error = 0
-        # for i in range(len(t)):
-        #     if t[i] != prediction[i]:
-        #         error += (-data_entrainement[i]*t[i])
-        error= metrics.accuracy_score(t, prediction)
+        for i in range(len(t)):
+            if t[i] != prediction[i]:
+                error += (-data_entrainement[i]*t[i])
             
         return error
                     
 
 
     @staticmethod
-    def erreur_finale(prediction,target_test):
+    def erreur_finale(prediction:np.array,target_test:np.array):
         """Fonction permettant de retourner l'erreur de test du modele
 
         Args:
@@ -138,10 +147,10 @@ class Random_ForestClassifier:
             _type_: _description_
         """
         error = 0
-        # for i in range(len(prediction)):
-        #     if prediction[i] != target_test[i]:
-        #         error += 1
-        # error = error / len(prediction) * 100
-        error= metrics.accuracy_score(target_test, prediction)*100
+        for i in range(len(prediction)):
+            if prediction[i] != target_test[i]:
+                error += 1
+        error = error / len(prediction) * 100
+        
         return error
         
