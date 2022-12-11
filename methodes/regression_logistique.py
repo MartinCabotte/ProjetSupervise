@@ -57,7 +57,7 @@ class Logistic_RegressionClassifier:
         
         #on réalise les simulations
         for solv in self.solvers_possible:
-            for c_estimer_test in np.arange(0.01,10,0.01):
+            for c_estimer_test in np.arange(0.1,10,0.1):
                 self.c_estimer = c_estimer_test
                 self.solvers=solv
                 print(self.c_estimer)
