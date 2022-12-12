@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from collections import Counter
+import dataset as dt
 
 def main():
     dataset = pd.read_csv("train.csv",sep=",",decimal=".")
@@ -46,10 +47,24 @@ def main():
     plt.ylabel("Number of attributes with this number of 0")
     plt.show() 
 
-    possiblyNotRepresentative = arrayOfZeros[arrayOfZeros>=(2*Q3)]
-    print("Ces attributs ne sont peut être pas représentatifs dans nos données car très représentés : ",possiblyNotRepresentative)
+    possiblyRepresentative = arrayOfZeros[arrayOfZeros>=(2*Q3)]
+    print("Ces attributs sont peut être très représentatifs dans nos données car il y a beaucoup de 0 dans le dataset : ",possiblyRepresentative)
 
-    
+    #La transformation du dataset sera la suivante : arrayOfZeros / max(arrayOfZeros)
+    maxZeros = max(arrayOfZeros)
+    weightZeros = arrayOfZeros/maxZeros
+    datasetToApplyWeights = dataset.drop(["id","species"],axis=1)
+    datasetToApplyWeights = datasetToApplyWeights * weightZeros
+    datasetToApplyWeights = pd.DataFrame(datasetToApplyWeights)
+
+    datasetToApplyWeights.to_csv("weightedDataset.csv")
+
+    #Maintenant, on va analyser les sorties spectrals de nos algorithmes
+    datasets3 = dt.dataset(dataset.drop(["id","species"],axis=1),3)
+    datasets7 = dt.dataset(dataset.drop(["id","species"],axis=1),7)
+
+    datasets3.spectral.to_csv("spectralDataset3Neighboor.csv")
+    datasets7.spectral.to_csv("spectralDataset7Neighboor.csv")
 
 if __name__ == "__main__":
     main()
