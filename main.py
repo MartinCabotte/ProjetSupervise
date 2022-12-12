@@ -6,6 +6,7 @@ from methodes.perceptron import PerceptronClassifier
 
 from methodes.SVM import SVMClassifier
 
+from methodes.Adaboost import AdaBoost
 
 import pretraitement.pretreat as pretreat
 import pandas as pd
@@ -16,25 +17,91 @@ import os
 def main():
     
     os.system("clear")
-    data_train = pd.read_csv("train.csv",sep=",",decimal=".")
-    data_test = pd.read_csv("test.csv",sep=",",decimal=".")
+
+    launch = True
+    print("Bienvenue dans l'analyse du jeu de données par 6 systèmes supervisé différents du groupe Cabotte Martin, Charmoille Maxime et Ducrocq Adrien : \n\n")
+    print("Veuillez choisir l'espace que vous souhaitez utiliser : \n")
+    print("1 - Basique")
+    print("2 - Spectral NJW avec K = 3")
+    print("3 - Spectral NJW avec K = 7")
+    print("4 - Weigthed Rought dataset")
+
+    choice = input()
     
-    target= pretreat.target(data_train)
+    data_train = np.array([])
+    data_test = np.array([])
     
-    data = pretreat.pretreat_data(data_train,data_test)
     
     
-    # data_train = data[0]
-    # data_test = data[1]
+    while launch :
+        if choice == "1":
+            data_train = pd.read_csv("train.csv",sep=",",decimal=".")
+            data_test = pd.read_csv("test.csv",sep=",",decimal=".")
+            
+            data = pretreat.pretreat_data(data_train,data_test)
+            
+            #On récupère les 770 premières données train pour entrainer le modele et les 220 dernières pour mesure l'efficacité en les envoyant en temps que données test
+            #Cela nous permet d'avoir un jeu de données test disposant de "target" 
+            
+            data_train = data[0][:770]
+            data_test = data[0][770:]
+
+            choice = "0"
+            
+        elif choice == "2":
+            data_train = pd.read_csv("spectralDataset3Neighboor.csv",sep=",",decimal=".")
+            data_test = pd.read_csv("test.csv",sep=",",decimal=".")
+            data_train.rename(columns = {'Unnamed: 0':'id'}, inplace = True)
+            data_train = data_train.drop("id",axis=1)
+            data_train = data_train.to_numpy()
+            
+            #On récupère les 770 premières données train pour entrainer le modele et les 220 dernières pour mesure l'efficacité en les envoyant en temps que données test
+            #Cela nous permet d'avoir un jeu de données test disposant de "target" 
+            
+            data_test = data_train[770:]
+            data_train = data_train[:770]
+
+            choice = "0"
+            
+        elif choice == "3":
+            data_train = pd.read_csv("spectralDataset7Neighboor.csv",sep=",",decimal=".")
+            data_test = pd.read_csv("test.csv",sep=",",decimal=".")
+            data_train.rename(columns = {'Unnamed: 0':'id'}, inplace = True)
+            data_train = data_train.drop("id",axis=1)
+            data_train = data_train.to_numpy()
+            
+            #On récupère les 770 premières données train pour entrainer le modele et les 220 dernières pour mesure l'efficacité en les envoyant en temps que données test
+            #Cela nous permet d'avoir un jeu de données test disposant de "target" 
+            
+            data_test = data_train[770:]
+            data_train = data_train[:770]
+
+            choice = "0"
+
+        elif choice == "4":
+            data_train = pd.read_csv("weightedDataset.csv",sep=",",decimal=".")
+            data_test = pd.read_csv("test.csv",sep=",",decimal=".")
+            data_train.rename(columns = {'Unnamed: 0':'id'}, inplace = True)
+            data_train = data_train.drop("id",axis=1)
+            data_train = data_train.to_numpy()
+            
+            #On récupère les 770 premières données train pour entrainer le modele et les 220 dernières pour mesure l'efficacité en les envoyant en temps que données test
+            #Cela nous permet d'avoir un jeu de données test disposant de "target" 
+            
+            data_test = data_train[770:]
+            data_train = data_train[:770]
+
+            choice = "0"
+        
+        else:
+            launch = False
+
     
-    #On récupère les 770 premières données train pour entrainer le modele et les 220 dernières pour mesure l'efficacité en les envoyant en temps que données test
-    #Cela nous permet d'avoir un jeu de données test disposant de "target" 
-    
-    data_train = data[0][:770]
-    data_test = data[0][770:]
-    
+    dataToLabellize = pd.read_csv("train.csv",sep=",",decimal=".")
+    target= pretreat.target(dataToLabellize)
     target_train = target[:770]
     target_test = target[770:]
+    
     
     launch = True
     print("Bienvenue dans l'analyse du jeu de données par 6 systèmes supervisé différents du groupe Cabotte Martin, Charmoille Maxime et Ducrocq Adrien : \n\n")
@@ -43,7 +110,7 @@ def main():
     print("2 - Méthodes à noyaux")
     print("3 - Random Forest")
     print("4 - Regression logistique")
-    print("5 - En attente")
+    print("5 - Adaboost")
     print("6 - En attente")
     print("7 - Quitter")
     
@@ -57,7 +124,7 @@ def main():
             print("2 - Méthodes à noyaux")
             print("3 - Random Forest")
             print("4 - Regression logistique")
-            print("5 - En attente")
+            print("5 - Adaboost")
             print("6 - En attente")
             print("7 - Quitter")
             choice = input()
@@ -193,7 +260,30 @@ def main():
             choice = "0"
             
         elif choice == "5":
-            print("En développement")
+            allPredictions = []
+            for i in range(10):
+                Ada = AdaBoost()
+                print(data_train)
+                Ada.validation_croisee(data_train,target_train)
+                
+                prediction = Ada.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(Ada.erreur_finale(toSave,target_test))
+                toSave.append(Ada.n_estimer)
+                toSave.append(Ada.learningRate)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print(target_test)
+                print("l'erreur est de : ", Ada.erreur_finale(prediction,target_test),"%")
+
+            allPredictions = pd.DataFrame(allPredictions)
+            
+            allPredictions.to_csv("results/AdaboostLabelsWeighted.csv")
+
+            print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
+            input()
             choice = "0"
             
         elif choice == "6":
