@@ -1,17 +1,16 @@
 import numpy as np
 import os
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import RidgeClassifier
+from sklearn import metrics
 
-
-class Logistic_RegressionClassifier:
+class Ridge_Classifier:
     
     def __init__(self):
         """on initie la classe du Random Forest"""
         
-        self.c_estimer = 0.01   
-        self.solvers_possible = ['newton-cg', 'lbfgs', 'liblinear']
-        self.solvers='newton-cg'
-        self.max_iter=100
+        self.lamb = 0.0001
+        self.solv=''
+        self.solv_possible=['svd','cholesky','lsqr']
         self.model = ""
         
     def entrainement(self,data_train:np.array,target_train:np.array):
@@ -21,9 +20,9 @@ class Logistic_RegressionClassifier:
             data_train (np.array): donnee d'entrainement
             target_train (np.array): cible correspondante pour les donnees d'entrainement
         """
-        logisticRegr = LogisticRegression(C=self.c_estimer,solver=self.solvers,max_iter=self.max_iter)
+        RC = RidgeClassifier(alpha=self.lamb)
         
-        self.model = logisticRegr.fit(data_train,target_train)
+        self.model = RC.fit(data_train,target_train)
         
         
         
@@ -38,9 +37,8 @@ class Logistic_RegressionClassifier:
         K = 10
             
         bestError = -1
-        best_C = 0
-        best_solv=self.solvers
-        best_iter=0
+        bestsolv=''
+        bestLambda=0
         
         #on mélange tout d'abord nos données
         index = np.arange(0,len(data),1)
@@ -57,12 +55,16 @@ class Logistic_RegressionClassifier:
         
         
         #on réalise les simulations
-        for max in np.arange(100,500,100):
-            for c_estimer_test in np.arange(0.1,0.3,0.1):
-                self.c_estimer = c_estimer_test
-                print(max)
+        for solv_test in self.solv_possible:
+            self.solv=solv_test
+            print(self.solv)
+            for lambda_test in np.arange(0.01,10,0.01):
+                self.lamb = lambda_test
+                
+                # print(self.lamb)
+                
                 meanError = 0
-            
+                
                 for i in range(0,K):
                     
                     testX = paquetsX[i]
@@ -75,24 +77,22 @@ class Logistic_RegressionClassifier:
                     
                     prediction = self.prediction(testX)
                     
+
                     meanError += self.erreur(testT,prediction,testX)
                     
-                meanError = meanError/K
+                meanError = np.mean(meanError)
                 
-                
-                
+                #On met à jour l'erreur la plus basse et les hyperparamètres associées
                 if ((bestError == -1)) or (meanError <= bestError):
                     bestError = meanError
-                    best_C = c_estimer_test
-                    best_iter=max
-                    
-        self.c_estimer = best_C
-        self.solvers=best_solv
-        self.max_iter=best_iter
+                    bestLambda = lambda_test
+                    bestsolv=solv_test
+                        
+        self.lamb = bestLambda
+        self.solv=bestsolv
         os.system("clear")
-        print("Le meilleur C est : ",best_C)
-        print("Le meilleur solveur est : ",best_solv)
-        print("Le meilleur iter est : ",best_iter)
+        print("Le meilleur lambda : ",bestLambda)
+        print("Le meilleur solv : ",bestsolv)
         
         #une fois les meilleurs hyperparametres trouves, on réentraine le modele avec le jeu complet de donnees
         self.entrainement(data,target)
@@ -125,13 +125,8 @@ class Logistic_RegressionClassifier:
         Returns:
             error (int) : l'erreur du modele
         """
-        error = 0
-        for i in range(len(t)):
-
-                if t[i] != prediction[i]:
-                    error += 1
-                else :
-                    error += 0
+        error =0
+        error= metrics.accuracy_score(t, prediction)
         return error
                     
 
@@ -148,10 +143,8 @@ class Logistic_RegressionClassifier:
             _type_: _description_
         """
         error = 0
-        for i in range(len(prediction)):
-            if prediction[i] != target_test[i]:
-                error += 1
-        error = error / len(prediction) * 100
+        
+        error= metrics.accuracy_score(target_test, prediction)*100
         
         return error
         

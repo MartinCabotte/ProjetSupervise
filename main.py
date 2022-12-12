@@ -1,10 +1,11 @@
 from methodes.Random_Forest import Random_ForestClassifier
 
-from methodes.regression_logistique import Logistic_RegressionClassifier
+from methodes.Ridge_Classifier import Ridge_Classifier
 
 from methodes.perceptron import PerceptronClassifier
 
 from methodes.SVM import SVMClassifier
+
 
 import pretraitement.pretreat as pretreat
 import pandas as pd
@@ -63,13 +64,28 @@ def main():
             
 
         if choice == "1":
-            per = PerceptronClassifier(1)
-            per.validation_croisee(data_train,target_train)
-            # per.entrainement(data_train,target_train)
             
-            prediction = per.prediction(data_test)
-            print(prediction)
-            print("l'erreur est de : ", per.erreur_finale(prediction,target_test),"%")
+            # per.entrainement(data_train,target_train)
+       
+            allPredictions = []
+            for i in range(10):
+                
+                per = PerceptronClassifier(1)
+                per.validation_croisee(data_train,target_train)
+                # RL.entrainement(data_train,target_train)
+                prediction = per.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(per.erreur_finale(toSave,target_test))
+                toSave.append(per.learningRate)
+                toSave.append(per.solv)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print("l'accuracy est de : ", per.erreur_finale(prediction,target_test),"%")
+            allPredictions = pd.DataFrame(allPredictions)
+            
+            allPredictions.to_csv("results/Perceptron.csv")
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
@@ -103,12 +119,30 @@ def main():
                 
                 svm = SVMClassifier("linear")
                 
-            svm.validation_croisee(data_train,target_train)
+                
+            allPredictions = []
+            for i in range(10):
+                
+                svm.validation_croisee(data_train,target_train)
+                # RL.entrainement(data_train,target_train)
+                prediction = svm.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(svm.erreur_finale(toSave,target_test))
+                toSave.append(svm.nu)
+                toSave.append(svm.gamma)
+                toSave.append(svm.coef0)
+                toSave.append(svm.M)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print("l'accuracy est de : ", per.erreur_finale(prediction,target_test),"%")
+            allPredictions = pd.DataFrame(allPredictions)
             
-            prediction = svm.prediction(data_test)
-            print(prediction)
-            print("erreur : ",svm.erreur_finale(prediction,target_test),"%")
+            allPredictions.to_csv("results/SVM.csv")
+            print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
+            
             choice = "0"
         
         elif choice == "3":
@@ -139,22 +173,22 @@ def main():
             allPredictions = []
             for i in range(10):
                 
-                RL = Logistic_RegressionClassifier()
-                RL.validation_croisee(data_train,target_train)
-                
-                prediction = RL.prediction(data_test)
+                RC = Ridge_Classifier()
+                RC.validation_croisee(data_train,target_train)
+                # RL.entrainement(data_train,target_train)
+                prediction = RC.prediction(data_test)
                 toSave = prediction.tolist()
-                toSave.append(RL.erreur_finale(toSave,target_test))
-                toSave.append(RL.c_estimer)
-                toSave.append(RL.solvers)
+                toSave.append(RC.erreur_finale(toSave,target_test))
+                toSave.append(RC.lamb)
+                toSave.append(RC.solv)
 
                 allPredictions.append(toSave)
                 
                 print(prediction)
-                print("l'erreur est de : ", RL.erreur_finale(prediction,target_test),"%")
+                print("l'accuracy est de : ", RC.erreur_finale(prediction,target_test),"%")
             allPredictions = pd.DataFrame(allPredictions)
             
-            allPredictions.to_csv("results/Regression_logistique.csv")
+            allPredictions.to_csv("results/Ridge_Classifieur.csv")
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
