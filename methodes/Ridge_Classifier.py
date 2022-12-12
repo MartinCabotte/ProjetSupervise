@@ -20,7 +20,7 @@ class Ridge_Classifier:
             data_train (np.array): donnee d'entrainement
             target_train (np.array): cible correspondante pour les donnees d'entrainement
         """
-        RC = RidgeClassifier(alpha=self.lamb)
+        RC = RidgeClassifier(alpha=self.lamb,solver=self.solv)
         
         self.model = RC.fit(data_train,target_train)
         
@@ -58,7 +58,7 @@ class Ridge_Classifier:
         for solv_test in self.solv_possible:
             self.solv=solv_test
             print(self.solv)
-            for lambda_test in np.arange(0.01,10,0.01):
+            for lambda_test in np.arange(0.1,10,0.1):
                 self.lamb = lambda_test
                 
                 # print(self.lamb)
@@ -80,10 +80,10 @@ class Ridge_Classifier:
 
                     meanError += self.erreur(testT,prediction,testX)
                     
-                meanError = np.mean(meanError)
+                meanError = meanError/K
                 
                 #On met à jour l'erreur la plus basse et les hyperparamètres associées
-                if ((bestError == -1)) or (meanError <= bestError):
+                if ((bestError == -1)) or (meanError >= bestError):
                     bestError = meanError
                     bestLambda = lambda_test
                     bestsolv=solv_test

@@ -68,7 +68,7 @@ def main():
             # per.entrainement(data_train,target_train)
        
             allPredictions = []
-            for i in range(10):
+            for i in range(1):
                 
                 per = PerceptronClassifier(1)
                 per.validation_croisee(data_train,target_train)
@@ -77,15 +77,15 @@ def main():
                 toSave = prediction.tolist()
                 toSave.append(per.erreur_finale(toSave,target_test))
                 toSave.append(per.learningRate)
-                toSave.append(per.solv)
+                toSave.append(per.lamb)
 
                 allPredictions.append(toSave)
                 
                 print(prediction)
-                print("l'accuracy est de : ", per.erreur_finale(prediction,target_test),"%")
+                print("l'erreur est de : ", per.erreur_finale(prediction,target_test),"%")
             allPredictions = pd.DataFrame(allPredictions)
             
-            allPredictions.to_csv("results/Perceptron.csv")
+            allPredictions.to_csv("results/PerceptronOVO.csv")
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
@@ -128,7 +128,6 @@ def main():
                 prediction = svm.prediction(data_test)
                 toSave = prediction.tolist()
                 toSave.append(svm.erreur_finale(toSave,target_test))
-                toSave.append(svm.nu)
                 toSave.append(svm.gamma)
                 toSave.append(svm.coef0)
                 toSave.append(svm.M)
@@ -136,7 +135,7 @@ def main():
                 allPredictions.append(toSave)
                 
                 print(prediction)
-                print("l'accuracy est de : ", per.erreur_finale(prediction,target_test),"%")
+                print("l'erreur est de : ", svm.erreur_finale(prediction,target_test),"%")
             allPredictions = pd.DataFrame(allPredictions)
             
             allPredictions.to_csv("results/SVM.csv")
