@@ -4,6 +4,8 @@ from methodes.perceptron import PerceptronClassifier
 
 from methodes.SVM import SVMClassifier
 
+from methodes.Adaboost import AdaBoost
+
 import pretraitement.pretreat as pretreat
 import pandas as pd
 import numpy as np
@@ -40,7 +42,7 @@ def main():
     print("2 - Méthodes à noyaux")
     print("3 - Random Forest")
     print("4 - En attente")
-    print("5 - En attente")
+    print("5 - Adaboost")
     print("6 - En attente")
     print("7 - Quitter")
     
@@ -54,7 +56,7 @@ def main():
             print("2 - Méthodes à noyaux")
             print("3 - En attente")
             print("4 - En attente")
-            print("5 - En attente")
+            print("5 - Adaboost")
             print("6 - En attente")
             print("7 - Quitter")
             choice = input()
@@ -125,7 +127,29 @@ def main():
             choice = "0"
             
         elif choice == "5":
-            print("En développement")
+            allPredictions = []
+            for i in range(10):
+                Ada = AdaBoost()
+                Ada.validation_croisee(data_train,target_train)
+                
+                prediction = Ada.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(Ada.erreur_finale(toSave,target_test))
+                toSave.append(Ada.n_estimer)
+                toSave.append(Ada.learningRate)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print(target_test)
+                print("l'erreur est de : ", Ada.erreur_finale(prediction,target_test),"%")
+
+            allPredictions = pd.DataFrame(allPredictions)
+            
+            allPredictions.to_csv("results/AdaboostLabels.csv")
+
+            print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
+            input()
             choice = "0"
             
         elif choice == "6":
