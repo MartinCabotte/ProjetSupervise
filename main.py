@@ -109,7 +109,7 @@ def main():
     print("1 - Perceptron")
     print("2 - Méthodes à noyaux")
     print("3 - Random Forest")
-    print("4 - Regression logistique")
+    print("4 - Ridge Classifieur")
     print("5 - Adaboost")
     print("6 - En attente")
     print("7 - Quitter")
@@ -123,7 +123,7 @@ def main():
             print("1 - Perceptron")
             print("2 - Méthodes à noyaux")
             print("3 - Random Forest")
-            print("4 - Regression logistique")
+            print("4 - Ridge Classifieur")
             print("5 - Adaboost")
             print("6 - En attente")
             print("7 - Quitter")
@@ -135,9 +135,9 @@ def main():
             # per.entrainement(data_train,target_train)
        
             allPredictions = []
-            for i in range(1):
+            for i in range(10):
                 
-                per = PerceptronClassifier(1)
+                per = PerceptronClassifier(0)
                 per.validation_croisee(data_train,target_train)
                 # RL.entrainement(data_train,target_train)
                 prediction = per.prediction(data_test)
@@ -152,7 +152,7 @@ def main():
                 print("l'erreur est de : ", per.erreur_finale(prediction,target_test),"%")
             allPredictions = pd.DataFrame(allPredictions)
             
-            allPredictions.to_csv("results/PerceptronOVO.csv")
+            allPredictions.to_csv("results/PerceptronOVRSpectral7.csv")
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
@@ -205,7 +205,7 @@ def main():
                 print("l'erreur est de : ", svm.erreur_finale(prediction,target_test),"%")
             allPredictions = pd.DataFrame(allPredictions)
             
-            allPredictions.to_csv("results/SVM.csv")
+            allPredictions.to_csv("results/WeigthedSVM4.csv")
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             
@@ -229,7 +229,7 @@ def main():
                 print("l'accuracy est de : ", RD.erreur_finale(prediction,target_test),"%")
             allPredictions = pd.DataFrame(allPredictions)
             
-            allPredictions.to_csv("results/RandomForestLabels.csv")
+            allPredictions.to_csv("results/RandomForestLabelsWeigthed.csv")
             
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()

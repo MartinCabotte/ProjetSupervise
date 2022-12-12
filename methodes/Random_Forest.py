@@ -112,14 +112,10 @@ class Random_ForestClassifier:
         Args:
             t (np.array): liste contenant le numero de la classe à laquelle appartient chaque element
             prediction (np.array): liste contenant le numero de la classe à laquelle appartient chaque selon le modele
-            methode (int): nombre permettant de choisir l'erreur a appliquer
         Returns:
             error (int) : l'erreur du modele
         """
         error = 0
-        # for i in range(len(t)):
-        #     if t[i] != prediction[i]:
-        #         error += (-data_entrainement[i]*t[i])
         error= metrics.accuracy_score(t, prediction)
             
         return error
@@ -138,10 +134,6 @@ class Random_ForestClassifier:
             _type_: _description_
         """
         error = 0
-        # for i in range(len(prediction)):
-        #     if prediction[i] != target_test[i]:
-        #         error += 1
-        # error = error / len(prediction) * 100
         error= metrics.accuracy_score(target_test, prediction)*100
         return error
         

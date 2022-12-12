@@ -6,7 +6,7 @@ from sklearn import metrics
 class Ridge_Classifier:
     
     def __init__(self):
-        """on initie la classe du Random Forest"""
+        """on initie la classe du Ridge Classifier"""
         
         self.lamb = 0.0001
         self.solv=''
@@ -78,7 +78,7 @@ class Ridge_Classifier:
                     prediction = self.prediction(testX)
                     
 
-                    meanError += self.erreur(testT,prediction,testX)
+                    meanError += self.erreur(testT,prediction)
                     
                 meanError = meanError/K
                 
@@ -115,13 +115,12 @@ class Ridge_Classifier:
     
       
     @staticmethod  
-    def erreur(t:np.array,prediction:np.array,data_entrainement:list) -> int:
+    def erreur(t:np.array,prediction:np.array) -> int:
         """fonction retournant l'erreur de prediction lors de l'entrainement du modele pour une valeur donnee
 
         Args:
             t (np.array): liste contenant le numero de la classe à laquelle appartient chaque element
             prediction (np.array): liste contenant le numero de la classe à laquelle appartient chaque selon le modele
-            methode (int): nombre permettant de choisir l'erreur a appliquer
         Returns:
             error (int) : l'erreur du modele
         """
