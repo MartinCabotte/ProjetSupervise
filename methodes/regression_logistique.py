@@ -11,6 +11,7 @@ class Logistic_RegressionClassifier:
         self.c_estimer = 0.01   
         self.solvers_possible = ['newton-cg', 'lbfgs', 'liblinear']
         self.solvers='newton-cg'
+        self.max_iter=100
         self.model = ""
         
     def entrainement(self,data_train:np.array,target_train:np.array):
@@ -20,7 +21,7 @@ class Logistic_RegressionClassifier:
             data_train (np.array): donnee d'entrainement
             target_train (np.array): cible correspondante pour les donnees d'entrainement
         """
-        logisticRegr = LogisticRegression(C=self.c_estimer,solver=self.solvers)
+        logisticRegr = LogisticRegression(C=self.c_estimer,solver=self.solvers,max_iter=self.max_iter)
         
         self.model = logisticRegr.fit(data_train,target_train)
         
@@ -37,9 +38,9 @@ class Logistic_RegressionClassifier:
         K = 10
             
         bestError = -1
-        bestn_estimer = 0
         best_C = 0
-        best_solv=''
+        best_solv=self.solvers
+        best_iter=0
         
         #on mélange tout d'abord nos données
         index = np.arange(0,len(data),1)
@@ -56,13 +57,10 @@ class Logistic_RegressionClassifier:
         
         
         #on réalise les simulations
-        for solv in self.solvers_possible:
-            for c_estimer_test in np.arange(0.1,10,0.1):
+        for max in np.arange(100,500,100):
+            for c_estimer_test in np.arange(0.1,0.3,0.1):
                 self.c_estimer = c_estimer_test
-                self.solvers=solv
-                print(self.c_estimer)
-                print(solv)
-                
+                print(max)
                 meanError = 0
             
                 for i in range(0,K):
@@ -79,24 +77,25 @@ class Logistic_RegressionClassifier:
                     
                     meanError += self.erreur(testT,prediction,testX)
                     
-                
-                meanError = np.mean(meanError)
+                meanError = meanError/K
                 
                 
                 
                 if ((bestError == -1)) or (meanError <= bestError):
                     bestError = meanError
                     best_C = c_estimer_test
-                    best_solv=solv
+                    best_iter=max
                     
-            self.c_estimer = best_C
-            self.solvers=best_solv
-            os.system("clear")
-            print("Le meilleur C est : ",best_C)
-            print("Le meilleur solveur est : ",best_solv)
-            
-            #une fois les meilleurs hyperparametres trouves, on réentraine le modele avec le jeu complet de donnees
-            self.entrainement(data,target)
+        self.c_estimer = best_C
+        self.solvers=best_solv
+        self.max_iter=best_iter
+        os.system("clear")
+        print("Le meilleur C est : ",best_C)
+        print("Le meilleur solveur est : ",best_solv)
+        print("Le meilleur iter est : ",best_iter)
+        
+        #une fois les meilleurs hyperparametres trouves, on réentraine le modele avec le jeu complet de donnees
+        self.entrainement(data,target)
         
         
         
@@ -128,9 +127,11 @@ class Logistic_RegressionClassifier:
         """
         error = 0
         for i in range(len(t)):
-            if t[i] != prediction[i]:
-                error += (-data_entrainement[i]*t[i])
-            
+
+                if t[i] != prediction[i]:
+                    error += 1
+                else :
+                    error += 0
         return error
                     
 

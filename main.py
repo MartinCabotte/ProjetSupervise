@@ -41,7 +41,7 @@ def main():
     print("1 - Perceptron")
     print("2 - Méthodes à noyaux")
     print("3 - Random Forest")
-    print("4 - En attente")
+    print("4 - Regression logistique")
     print("5 - En attente")
     print("6 - En attente")
     print("7 - Quitter")
@@ -55,7 +55,7 @@ def main():
             print("1 - Perceptron")
             print("2 - Méthodes à noyaux")
             print("3 - Random Forest")
-            print("4 - En attente")
+            print("4 - Regression logistique")
             print("5 - En attente")
             print("6 - En attente")
             print("7 - Quitter")
@@ -112,23 +112,49 @@ def main():
             choice = "0"
         
         elif choice == "3":
-            RD = Random_ForestClassifier()
-            RD.validation_croisee(data_train,target_train)
+            allPredictions = []
+            for i in range(10):
+                
+                RD = Random_ForestClassifier()
+                RD.validation_croisee(data_train,target_train)
+                
+                prediction = RD.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(RD.erreur_finale(toSave,target_test))
+                toSave.append(RD.n_estimer)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print("l'accuracy est de : ", RD.erreur_finale(prediction,target_test),"%")
+            allPredictions = pd.DataFrame(allPredictions)
             
-            prediction = RD.prediction(data_test)
-            print(prediction)
-            print("l'accuracy est de : ", RD.erreur_finale(prediction,target_test),"%")
+            allPredictions.to_csv("results/RandomForestLabels.csv")
+            
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
             
         elif choice == "4":
-            RL = Logistic_RegressionClassifier()
-            RL.validation_croisee(data_train,target_train)
+            allPredictions = []
+            for i in range(10):
+                
+                RL = Logistic_RegressionClassifier()
+                RL.validation_croisee(data_train,target_train)
+                
+                prediction = RL.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(RL.erreur_finale(toSave,target_test))
+                toSave.append(RL.c_estimer)
+                toSave.append(RL.solvers)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print("l'erreur est de : ", RL.erreur_finale(prediction,target_test),"%")
+            allPredictions = pd.DataFrame(allPredictions)
             
-            prediction = RL.prediction(data_test)
-            print(prediction)
-            print("l'erreur est de : ", RL.erreur_finale(prediction,target_test),"%")
+            allPredictions.to_csv("results/Regression_logistique.csv")
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
