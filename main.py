@@ -1,4 +1,6 @@
-from   methodes.Random_Forest import Random_ForestClassifier
+from methodes.Random_Forest import Random_ForestClassifier
+
+from methodes.Ridge_Classifier import Ridge_Classifier
 
 from methodes.perceptron import PerceptronClassifier
 
@@ -107,7 +109,7 @@ def main():
     print("1 - Perceptron")
     print("2 - Méthodes à noyaux")
     print("3 - Random Forest")
-    print("4 - En attente")
+    print("4 - Regression logistique")
     print("5 - Adaboost")
     print("6 - En attente")
     print("7 - Quitter")
@@ -120,8 +122,8 @@ def main():
             print("Veuillez choisir la méthode que vous souhaitez utiliser : \n")
             print("1 - Perceptron")
             print("2 - Méthodes à noyaux")
-            print("3 - En attente")
-            print("4 - En attente")
+            print("3 - Random Forest")
+            print("4 - Regression logistique")
             print("5 - Adaboost")
             print("6 - En attente")
             print("7 - Quitter")
@@ -129,13 +131,28 @@ def main():
             
 
         if choice == "1":
-            per = PerceptronClassifier(1)
-            per.validation_croisee(data_train,target_train)
-            # per.entrainement(data_train,target_train)
             
-            prediction = per.prediction(data_test)
-            print(prediction)
-            print("l'erreur est de : ", per.erreur_finale(prediction,target_test),"%")
+            # per.entrainement(data_train,target_train)
+       
+            allPredictions = []
+            for i in range(1):
+                
+                per = PerceptronClassifier(1)
+                per.validation_croisee(data_train,target_train)
+                # RL.entrainement(data_train,target_train)
+                prediction = per.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(per.erreur_finale(toSave,target_test))
+                toSave.append(per.learningRate)
+                toSave.append(per.lamb)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print("l'erreur est de : ", per.erreur_finale(prediction,target_test),"%")
+            allPredictions = pd.DataFrame(allPredictions)
+            
+            allPredictions.to_csv("results/PerceptronOVO.csv")
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
@@ -169,27 +186,77 @@ def main():
                 
                 svm = SVMClassifier("linear")
                 
-            svm.validation_croisee(data_train,target_train)
+                
+            allPredictions = []
+            for i in range(10):
+                
+                svm.validation_croisee(data_train,target_train)
+                # RL.entrainement(data_train,target_train)
+                prediction = svm.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(svm.erreur_finale(toSave,target_test))
+                toSave.append(svm.gamma)
+                toSave.append(svm.coef0)
+                toSave.append(svm.M)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print("l'erreur est de : ", svm.erreur_finale(prediction,target_test),"%")
+            allPredictions = pd.DataFrame(allPredictions)
             
-            prediction = svm.prediction(data_test)
-            print(prediction)
-            print("erreur : ",svm.erreur_finale(prediction,target_test),"%")
+            allPredictions.to_csv("results/SVM.csv")
+            print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
+            
             choice = "0"
         
         elif choice == "3":
-            RD = Random_ForestClassifier()
-            RD.validation_croisee(data_train,target_train)
+            allPredictions = []
+            for i in range(10):
+                
+                RD = Random_ForestClassifier()
+                RD.validation_croisee(data_train,target_train)
+                
+                prediction = RD.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(RD.erreur_finale(toSave,target_test))
+                toSave.append(RD.n_estimer)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print("l'accuracy est de : ", RD.erreur_finale(prediction,target_test),"%")
+            allPredictions = pd.DataFrame(allPredictions)
             
-            prediction = RD.prediction(data_test)
-            print(prediction)
-            print("l'erreur est de : ", RD.erreur_finale(prediction,target_test),"%")
+            allPredictions.to_csv("results/RandomForestLabels.csv")
+            
             print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
             input()
             choice = "0"
             
         elif choice == "4":
-            print("En développement")
+            allPredictions = []
+            for i in range(10):
+                
+                RC = Ridge_Classifier()
+                RC.validation_croisee(data_train,target_train)
+                # RL.entrainement(data_train,target_train)
+                prediction = RC.prediction(data_test)
+                toSave = prediction.tolist()
+                toSave.append(RC.erreur_finale(toSave,target_test))
+                toSave.append(RC.lamb)
+                toSave.append(RC.solv)
+
+                allPredictions.append(toSave)
+                
+                print(prediction)
+                print("l'accuracy est de : ", RC.erreur_finale(prediction,target_test),"%")
+            allPredictions = pd.DataFrame(allPredictions)
+            
+            allPredictions.to_csv("results/Ridge_Classifieur.csv")
+            print("\n\nEntrez n'importe quelle touche pour revenir au menu principal")
+            input()
             choice = "0"
             
         elif choice == "5":
