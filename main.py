@@ -8,6 +8,8 @@ from methodes.SVM import SVMClassifier
 
 from methodes.Adaboost import AdaBoost
 
+from methodes.Fusion import Fusion
+
 import pretraitement.pretreat as pretreat
 import pandas as pd
 import numpy as np
@@ -111,7 +113,7 @@ def main():
     print("3 - Random Forest")
     print("4 - Regression logistique")
     print("5 - Adaboost")
-    print("6 - En attente")
+    print("6 - Fusion")
     print("7 - Quitter")
     
     choice = input()
@@ -125,7 +127,7 @@ def main():
             print("3 - Random Forest")
             print("4 - Regression logistique")
             print("5 - Adaboost")
-            print("6 - En attente")
+            print("6 - Fusion")
             print("7 - Quitter")
             choice = input()
             
@@ -287,7 +289,11 @@ def main():
             choice = "0"
             
         elif choice == "6":
-            print("En développement")
+            print("Fusion")
+            Fs = Fusion()
+            prediction = Fs.labels
+            print("l'erreur est de : ", Fs.erreur_finale(prediction,target_test),"%")
+
             choice = "0"
         
         else:
