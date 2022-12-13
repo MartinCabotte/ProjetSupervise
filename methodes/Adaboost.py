@@ -53,7 +53,7 @@ class AdaBoost:
         
         
         #on réalise les simulations
-        for n_estimer_test in np.arange(50,250,50):
+        for n_estimer_test in np.arange(50,1000,50):
             self.n_estimer = n_estimer_test
             print(self.n_estimer)
 
